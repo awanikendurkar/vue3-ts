@@ -1,6 +1,6 @@
-# TypeScript and Vue with Frontend Masters
+# TypeScript and Vue 3
 
-Watch the full course on the [Frontend Masters website](https://frontendmasters.com/courses/vue-typescript).
+Building a "what new restaurant do I wanna try" app using Vue3 and TypeScript
 
 ## Prerequisites
 
@@ -20,6 +20,7 @@ npm install
 ```
 
 To run the application, use:
+
 ```bash
 npm run dev
 ```
@@ -27,6 +28,7 @@ npm run dev
 ## Course Errata
 
 ### Global State Management with Pinia
+
 During the Global State Management with Pinia lesson, the user interface is not reactive. If you delete a restaurant or dish, you need to change views in order to see the updated UI. Follow the steps below to create a reactive interface:
 
 In `RestaurantPage.vue`, import `storeToRefs` from Pinia:
@@ -38,11 +40,11 @@ import { storeToRefs } from 'pinia'
 Update the `restaurantList` array:
 
 ```javascript
-const restaurantList = storeToRefs(restaurantStore).list
+const restaurantList = storeToRefs(restaurantStore).list;
 ```
 
 In the `filteredRestaurantList` computed property, update the `filter` method:
+
 ```javascript
 return restaurantList.value.filter((restaurant) => { ... })
 ```
-
