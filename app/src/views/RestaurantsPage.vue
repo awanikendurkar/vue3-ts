@@ -1,16 +1,10 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
-import type { PropType } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import NewRestaurantForm from '../components/NewRestaurantForm.vue'
 import RestaurantCard from '../components/RestaurantCard.vue'
 import SideMenu from '../components/SideMenu.vue'
 import type { Restaurant } from '@/types'
-
-type DataShape = {
-  filterText: string
-  restaurantList: Restaurant[]
-  showNewForm: boolean
-}
 
 export default defineComponent({
   components: {
@@ -18,9 +12,11 @@ export default defineComponent({
     RestaurantCard,
     SideMenu,
   },
-  data: (): DataShape => ({
-    filterText: '',
-    restaurantList: [
+  setup() {
+    /**
+     * Restaurant Module
+     */
+    const restaurantList = ref<Restaurant[]>([
       {
         id: '9f995ce4-d2fc-4d00-af1d-6cb1647c6bd3',
         name: 'Quiche From a Rose',
@@ -42,44 +38,127 @@ export default defineComponent({
         website: 'www.penneforyourthoughts.com',
         status: 'Do Not Recommend',
       },
-    ],
-    showNewForm: false,
-  }),
-  computed: {
-    filteredRestaurantList(): Restaurant[] {
-      return this.restaurantList.filter((restaurant) => {
+    ])
+
+    const filteredRestaurantList = computed((): Restaurant[] => {
+      return restaurantList.value.filter((restaurant) => {
         if (restaurant.name) {
-          return restaurant.name.toLowerCase().includes(this.filterText.toLowerCase())
+          return restaurant.name.toLowerCase().includes(filterText.value.toLowerCase())
         } else {
-          return this.restaurantList
+          return restaurantList.value
         }
       })
-    },
-    numberOfRestaurants(): number {
-      return this.filteredRestaurantList.length
-    },
-  },
-  methods: {
-    addRestaurant(payload: Restaurant) {
-      this.restaurantList.push(payload)
-      this.hideForm()
-    },
-    deleteRestaurant(payload: Restaurant) {
-      this.restaurantList = this.restaurantList.filter((restaurant) => {
+    })
+
+    const numberOfRestaurants = computed((): number => {
+      return filteredRestaurantList.value.length
+    })
+
+    const addRestaurant = (payload: Restaurant) => {
+      restaurantList.value.push(payload)
+      hideForm()
+    }
+
+    const deleteRestaurant = (payload: Restaurant) => {
+      restaurantList.value = restaurantList.value.filter((restaurant) => {
         return restaurant.id !== payload.id
       })
-    },
-    hideForm() {
-      this.showNewForm = false
-    },
-  },
-  mounted() {
-    const route = this.$route
+    }
 
-    if (this.$route.query.new) {
-      this.showNewForm = true
+    /**
+     * New Form Module
+     */
+    const filterText = ref('')
+    const showNewForm = ref(false)
+
+    const hideForm = () => {
+      showNewForm.value = false
+    }
+
+    onMounted(() => {
+      const route = useRoute()
+
+      if (route.query.new) {
+        showNewForm.value = true
+      }
+    })
+
+    return {
+      addRestaurant,
+      deleteRestaurant,
+      filterText,
+      filteredRestaurantList,
+      hideForm,
+      numberOfRestaurants,
+      restaurantList,
+      showNewForm,
     }
   },
+
+  /* OPTIONS API */
+
+  // data: (): DataShape => ({
+  //   filterText: '',
+  //   restaurantList: [
+  //     {
+  //       id: '9f995ce4-d2fc-4d00-af1d-6cb1647c6bd3',
+  //       name: 'Quiche From a Rose',
+  //       address: '283 Thisisnota St.',
+  //       website: 'www.quichefromarose.com',
+  //       status: 'Want to Try',
+  //     },
+  //     {
+  //       id: 'ae62a3da-791b-4f44-99a1-4be1b0ec30b8',
+  //       name: 'Tamago Never Dies',
+  //       address: '529 Letsgofora Dr.',
+  //       website: 'www.tamagoneverdies.com',
+  //       status: 'Recommended',
+  //     },
+  //     {
+  //       id: '9b361dae-2d44-4499-9940-97e188d41a32',
+  //       name: 'Penne For Your Thoughts',
+  //       address: '870 Thisisa St.',
+  //       website: 'www.penneforyourthoughts.com',
+  //       status: 'Do Not Recommend',
+  //     },
+  //   ],
+  //   showNewForm: false,
+  // }),
+  // computed: {
+  //   filteredRestaurantList(): Restaurant[] {
+  //     return this.restaurantList.filter((restaurant) => {
+  //       if (restaurant.name) {
+  //         return restaurant.name.toLowerCase().includes(this.filterText.toLowerCase())
+  //       } else {
+  //         return this.restaurantList
+  //       }
+  //     })
+  //   },
+  //   numberOfRestaurants(): number {
+  //     return this.filteredRestaurantList.length
+  //   },
+  // },
+  // methods: {
+  //   addRestaurant(payload: Restaurant) {
+  //     this.restaurantList.push(payload)
+  //     this.hideForm()
+  //   },
+  //   deleteRestaurant(payload: Restaurant) {
+  //     this.restaurantList = this.restaurantList.filter((restaurant) => {
+  //       return restaurant.id !== payload.id
+  //     })
+  //   },
+  //   hideForm() {
+  //     this.showNewForm = false
+  //   },
+  // },
+  // mounted() {
+  //   const route = this.$route
+
+  //   if (this.$route.query.new) {
+  //     this.showNewForm = true
+  //   }
+  // },
 })
 </script>
 

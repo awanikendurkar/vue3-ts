@@ -14,8 +14,8 @@ Building a "what new restaurant do I wanna try" app using Vue3 and TypeScript
 > Note: Make sure to change directories into the `app` directory before running `npm install`.
 
 ```bash
-git clone https://github.com/bencodezen/typescript-and-vue-workshop.git
-cd typescript-and-vue-workshop/app
+git clone https://github.com/awanikendurkar/vue3-ts.git
+cd vue3-ts/app
 npm install
 ```
 
